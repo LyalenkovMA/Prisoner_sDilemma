@@ -8,16 +8,15 @@ namespace Prisoner_sDilemma
 {
     internal class AnEyeForEye : IStratege
     {
-        public AnEyeForEye(Prisoner prisoner) 
-        {
-            Prisoner = prisoner;
-        }
-
         public Prisoner Prisoner { get; }
 
-        public void Start(bool countStep, bool isGoStep)
+        public void Start(int[] listStep, int indexStep)
         {
-            
+            if (listStep[indexStep - 1] == 1)
+                Prisoner.Choice(1);
+            if (listStep[indexStep - 1] == 2)
+                Prisoner.Choice(2);
+
         }
     }
 }

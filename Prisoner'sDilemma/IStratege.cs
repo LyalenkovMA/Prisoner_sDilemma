@@ -10,6 +10,6 @@ namespace Prisoner_sDilemma
     {
         Prisoner Prisoner { get; }
 
-        void Start(bool countStep, bool isGoStep);
+        void Start(int[] listStep, int indexStep);
     }
 }
