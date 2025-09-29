@@ -8,114 +8,81 @@ namespace Prisoner_sDilemma
 {
     public class ControlPrisoners
     {
+        private const int _countStep = 200;
         private const int KeyBitray = 1;
         private const int KeyNotBitray = 2;
+
         private Prisoner _prisonerOne;
         private Prisoner _prisonerTwo;
+        private IStratege[] _strateges;
 
         private int _balsPrisonerOne;
         private int _balsPrisonerTwo;
+        private IStratege _strategePrisonerOne;
+        private IStratege _strategePrisonerTwo;
 
         public ControlPrisoners()
         {
             _prisonerOne = new Prisoner();
             _prisonerTwo = new Prisoner();
 
-            _balsPrisonerOne = 0;
-            _balsPrisonerTwo = 0;
+            _strateges = new IStratege[0];
         }
 
         public void Start()
         {
-            int startBals = 1;
-            bool isStart = true;
-
-            while (isStart)
+            for(int i = 0; i < _strateges.Length; i++)
             {
-                Console.WriteLine("на старт игры, каждому игроку дают по балу");
-                Console.WriteLine("каждый игрок может отдать его соседу.");
-                Console.WriteLine("за это другой игрок получает 3 бала с верху");
-                Console.WriteLine("за сотрудничество каждый игрок получает по балу сверху своих");
-                Console.WriteLine("Хотит предать?");
-                _balsPrisonerOne = startBals;
-                _balsPrisonerTwo = startBals;
-
-                bool isBitrayPrisonerOne = Control(_prisonerOne);
-                bool isBitrayPrisonerTwo = Control(_prisonerTwo);
-
-                if (isBitrayPrisonerOne == false && isBitrayPrisonerTwo == false)
+                _strategePrisonerOne = _strateges[i];
+                
+                for(int j = 0; j < _strateges.Length; j++)
                 {
-                    _balsPrisonerOne += 2;
-                    _balsPrisonerTwo += 2;
-                }
-                else
-                {
-                    if (_prisonerOne.IsBitray == true && _prisonerTwo.IsBitray == false)
-                    {
-                        _balsPrisonerOne += 4;
-                        _balsPrisonerTwo -= 1;
-                    }
-                    if (_prisonerOne.IsBitray == false && _prisonerTwo.IsBitray == true)
-                    {
-                        _balsPrisonerOne -= 1;
-                        _balsPrisonerTwo += 4;
-                    }
-                }
+                    _balsPrisonerOne = 0;
+                    _balsPrisonerTwo = 0;
+                    _strategePrisonerTwo = _strateges[j];
 
-                PrintPrisoner(_prisonerOne,_balsPrisonerOne);
-                PrintPrisoner(_prisonerTwo,_balsPrisonerTwo);
+                    int[] stepPrisonerOne = new int[_countStep];
+                    int[] stepPrisonerTwo = new int[_countStep];
 
+                    for (int g = 0; g < _countStep; g++)
+                    {
+                        _prisonerOne.Choice(_strategePrisonerOne.GetChoice());
+                        _prisonerTwo.Choice(_strategePrisonerTwo.GetChoice());
+
+                        ChoicePrisoner(stepPrisonerOne, g, _prisonerOne);
+                        ChoicePrisoner(stepPrisonerTwo, g, _prisonerTwo);
+
+                        _strategePrisonerOne.Start(stepPrisonerTwo, g);
+                        _strategePrisonerTwo.Start(stepPrisonerOne, g);
+                    }
+
+                    PrintChoicesPrisoner(stepPrisonerOne, _strategePrisonerOne);
+                    Console.WriteLine();
+                    PrintChoicesPrisoner(stepPrisonerTwo, _strategePrisonerTwo);
+                    Console.WriteLine();
+                }
             }
         }
 
-        private void PrintPrisoner(Prisoner prisoner, int bals)
+        private void PrintChoicesPrisoner(int[] stepPrisonerOne, IStratege stratege)
+        {
+            Console.Write($"{stratege.Title}");
+
+            foreach (int key in stepPrisonerOne)
+            {
+                if (key == KeyBitray)
+                    Console.Write(" предал ");
+                else
+                    Console.Write(" не предал ");
+            }
+        }
+
+        private void ChoicePrisoner(int[] stepsPrisoner, int index, Prisoner prisoner)
         {
             if (prisoner.IsBitray)
-                Console.WriteLine($"игрок предал у него {bals} ,балов");
+                stepsPrisoner[index] = KeyBitray;
             else
-                Console.WriteLine($"игрок не предал у него {bals} ,балов");
-        }
-
-        private bool Control(Prisoner prisoner)
-        {
-            const string ComandYes = "да";
-            const string ComandNot = "нет";
-
-            string userComand;
-            int key =0;
-            bool isSerche = false;
-
-            while(isSerche == false)
-            {
-                Console.WriteLine("Хотите сотрудничать, или предать поддельника:");
-                Console.WriteLine($"если да то введите ({ComandYes})");
-                Console.WriteLine($"если нет то введите ({ComandNot})");
-                Console.Write("Ввод:");
-                userComand = Console.ReadLine();
-
-                switch (userComand)
-                {
-                    case ComandYes:
-                        Choice(KeyNotBitray, out key, out isSerche, prisoner);
-                        break;
-                    case ComandNot:
-                        Choice(KeyBitray, out key, out isSerche, prisoner);
-                        break;
-                }
-            }
-
-            prisoner.Choice(key);
-
-            return prisoner.IsBitray;
-        }
-
-        private void Choice(int keyBitray, out int key, out bool isSerche, Prisoner prisoner)
-        {
-            key = keyBitray;
-            isSerche = true;
-
-            prisoner.Choice(key);
-            
+                stepsPrisoner[index] = KeyNotBitray;
         }
     }
 }

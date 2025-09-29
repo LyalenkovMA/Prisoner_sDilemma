@@ -10,6 +10,10 @@ namespace Prisoner_sDilemma
     {
         Prisoner Prisoner { get; }
 
+        string Title { get; }
+
         void Start(int[] listStep, int indexStep);
+
+        int GetChoice();
     }
 }
