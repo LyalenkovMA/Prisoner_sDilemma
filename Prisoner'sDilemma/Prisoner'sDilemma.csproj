@@ -46,6 +46,7 @@
     <Compile Include="AnEyeForEye.cs" />
     <Compile Include="ControlPrisoners.cs" />
     <Compile Include="IStratege.cs" />
+    <Compile Include="OnMyMind.cs" />
     <Compile Include="Prisoner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

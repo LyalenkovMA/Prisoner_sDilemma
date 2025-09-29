@@ -26,7 +26,9 @@ namespace Prisoner_sDilemma
             _prisonerOne = new Prisoner();
             _prisonerTwo = new Prisoner();
 
-            _strateges = new IStratege[0];
+            _strateges = new IStratege[2];
+            _strateges[0] = new AnEyeForEye();  
+            _strateges[1] = new OnMyMind();  
         }
 
         public void Start()
@@ -54,12 +56,36 @@ namespace Prisoner_sDilemma
 
                         _strategePrisonerOne.Start(stepPrisonerTwo, g);
                         _strategePrisonerTwo.Start(stepPrisonerOne, g);
+
+                        if(_prisonerOne.IsBitray && _prisonerTwo.IsBitray)
+                        {
+                            _balsPrisonerOne += 1;
+                            _balsPrisonerTwo += 1;
+                        }
+                        else if(_prisonerOne.IsBitray == false && _prisonerTwo.IsBitray)
+                        {
+                            _balsPrisonerOne += 0;
+                            _balsPrisonerTwo += 5;
+                        }
+                        else if (_prisonerOne.IsBitray  && _prisonerTwo.IsBitray == false)
+                        {
+                            _balsPrisonerOne += 5;
+                            _balsPrisonerTwo += 0;
+                        }
+                        else if (_prisonerOne.IsBitray == false && _prisonerTwo.IsBitray == false)
+                        {
+                            _balsPrisonerOne += 3;
+                            _balsPrisonerTwo += 3;
+                        }
                     }
 
                     PrintChoicesPrisoner(stepPrisonerOne, _strategePrisonerOne);
                     Console.WriteLine();
                     PrintChoicesPrisoner(stepPrisonerTwo, _strategePrisonerTwo);
                     Console.WriteLine();
+
+                    Console.WriteLine($"{_strategePrisonerOne.Title} набрал {_balsPrisonerOne}");
+                    Console.WriteLine($"{_strategePrisonerTwo.Title} набрал {_balsPrisonerTwo}");
                 }
             }
         }
@@ -71,9 +97,9 @@ namespace Prisoner_sDilemma
             foreach (int key in stepPrisonerOne)
             {
                 if (key == KeyBitray)
-                    Console.Write(" предал ");
+                    Console.Write(" да ");
                 else
-                    Console.Write(" не предал ");
+                    Console.Write(" нет ");
             }
         }
 

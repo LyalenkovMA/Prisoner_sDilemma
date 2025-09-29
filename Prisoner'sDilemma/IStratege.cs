@@ -8,8 +8,6 @@ namespace Prisoner_sDilemma
 {
     public interface IStratege
     {
-        Prisoner Prisoner { get; }
-
         string Title { get; }
 
         void Start(int[] listStep, int indexStep);
